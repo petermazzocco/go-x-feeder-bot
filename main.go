@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"go-x-feeder-bot/bluesky"
+	"net/http"
 	"time"
 
 	"os"
@@ -42,6 +44,13 @@ func init() {
 	// Create the xrpc client
 	client := &xrpc.Client{
 		Host: host,
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+			},
+		},
 	}
 
 	// Context with timeout

@@ -18,8 +18,21 @@ func Job(client *xrpc.Client) (func(), error) {
 
 	// Get ENV variables
 	authToken := os.Getenv("AUTH_TOKEN")
+	if authToken == "" {
+		fmt.Println("Error: AUTH TOKEN environment variable is required")
+		return nil, fmt.Errorf("AUTH TOKEN environment variable is required")
+
+	}
 	csrfToken := os.Getenv("CSRF_TOKEN")
+	if csrfToken == "" {
+		fmt.Println("Error: CSRF TOKEN environment variable is required")
+		return nil, fmt.Errorf("CSRF TOKEN environment variable is required")
+	}
 	twitterAccount := os.Getenv("TWITTER_ACCOUNT")
+	if twitterAccount == "" {
+		fmt.Println("Error: TWITTER ACCOUNT environment variable is required")
+		return nil, fmt.Errorf("TWITTER ACCOUNT environment variable is required")
+	}
 
 	// Return a function, not nil
 	return func() {
@@ -27,8 +40,19 @@ func Job(client *xrpc.Client) (func(), error) {
 		scraper.SetAuthToken(twitterscraper.AuthToken{Token: authToken, CSRFToken: csrfToken})
 
 		// After setting Cookies or AuthToken you have to execute IsLoggedIn method.
+		// Add debug logging
+		fmt.Printf("Auth token length: %d, starts with: %s...\n", len(authToken), authToken[:5])
+		fmt.Printf("CSRF token length: %d, starts with: %s...\n", len(csrfToken), csrfToken[:5])
+
 		if !scraper.IsLoggedIn() {
-			fmt.Println("Invalid auth tokens")
+			fmt.Println("Invalid auth tokens - cannot authenticate with Twitter")
+			// Additional debugging info
+			resp, err := scraper.GetProfile("beaverfootball")
+			if err != nil {
+				fmt.Printf("Error info: %v\n", err)
+			} else {
+				fmt.Printf("Got response but still not logged in, status: %v\n", resp)
+			}
 			return
 		}
 
