@@ -23,8 +23,21 @@ func init() {
 	}
 	// Load envs
 	host := os.Getenv("HOST")
+	if host == "" {
+		host = "https://bsky.social" // Default value
+	}
+
 	handle := os.Getenv("HANDLE")
+	if handle == "" {
+		fmt.Println("Error: HANDLE environment variable is required")
+		return
+	}
+
 	password := os.Getenv("PASSWORD")
+	if password == "" {
+		fmt.Println("Error: PASSWORD environment variable is required")
+		return
+	}
 
 	// Create the xrpc client
 	client := &xrpc.Client{
