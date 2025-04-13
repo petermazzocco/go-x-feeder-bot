@@ -3,6 +3,7 @@ module go-x-feeder-bot
 go 1.23.2
 
 require (
+	github.com/bluesky-social/indigo v0.0.0-20250411024310-8500c47d717c
 	github.com/imperatrona/twitter-scraper v0.0.17
 	github.com/joho/godotenv v1.5.1
 	github.com/robfig/cron v1.2.0
@@ -10,7 +11,6 @@ require (
 
 require (
 	github.com/AlexEidt/Vidio v1.5.1 // indirect
-	github.com/bluesky-social/indigo v0.0.0-20250411024310-8500c47d717c // indirect
 	github.com/carlmjohnson/versioninfo v0.22.5 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect

@@ -2,32 +2,25 @@ package main
 
 import (
 	"fmt"
-	"go-x-feeder-bot/cronJobs"
-	"go-x-feeder-bot/initializers"
+	"go-x-feeder-bot/bluesky"
 
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/robfig/cron"
 )
 
 func init() {
-	if err := initializers.InitializeEVN(); err != nil {
-		fmt.Println("An error occured initializing environment variables:", err)
-	}
-
-	if err := initializers.InitializeClient(); err != nil {
-		fmt.Println("An error occured initializing client:", err)
-	}
-
-	if err := initializers.InitializeScrapper(); err != nil {
-		fmt.Println("An error occured initializing scrapper:", err)
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("An error occured loading environment variables, skipping:", err)
 	}
 }
 
 func main() {
 	jobSpec := os.Getenv("JOB_SPEC")
 
-	job, err := cronJobs.Job()
+	job, err := bluesky.Job()
 	if err != nil {
 		fmt.Println("An error occured running job:", err)
 		return
@@ -35,6 +28,8 @@ func main() {
 
 	// Instantiate new cron job
 	c := cron.New()
+
+	job()
 
 	c.AddFunc(jobSpec, job)
 	c.Start()
