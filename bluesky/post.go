@@ -24,7 +24,7 @@ func removeURLs(text string) string {
 }
 
 // PostToBluesky posts text and media to Bluesky
-func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscraper.Video, client *xrpc.Client) {
+func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscraper.Video, client *xrpc.Client) error {
 	// Context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -37,7 +37,7 @@ func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscra
 	feed, err := bsky.FeedGetAuthorFeed(ctx, client, client.Auth.Did, "", "", false, 10)
 	if err != nil {
 		fmt.Println("Error fetching feed:", err)
-		return
+		return err
 	}
 
 	// Loop through the feed and check if the cleanedText already exists
@@ -46,7 +46,7 @@ func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscra
 		fmt.Printf("Post: %s\n", postRecord.Text)
 		if postRecord.Text == cleanedText {
 			fmt.Println("Post already exists, skipping")
-			return
+			return nil
 		}
 	}
 
@@ -124,9 +124,10 @@ func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscra
 
 	if err != nil {
 		fmt.Println("Error creating post:", err)
-		return
+		return err
 	}
 
 	// Print URI for verification
 	fmt.Println("Post URI:", resp.Uri)
+	return nil
 }

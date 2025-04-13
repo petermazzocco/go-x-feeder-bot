@@ -69,4 +69,6 @@ func main() {
 	c := cron.New()
 	c.AddFunc(jobSpec, job)
 	c.Start()
+	fmt.Println("Cron scheduler started. Press Ctrl+C to exit...")
+	select {} // This will block forever
 }
