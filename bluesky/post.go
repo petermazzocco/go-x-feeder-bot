@@ -3,7 +3,6 @@ package bluesky
 import (
 	"context"
 	"fmt"
-	"os"
 	"regexp"
 	"time"
 
@@ -25,38 +24,11 @@ func removeURLs(text string) string {
 }
 
 // PostToBluesky posts text and media to Bluesky
-func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscraper.Video) {
+func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscraper.Video, client *xrpc.Client) {
 	// Context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Load envs
-	host := os.Getenv("HOST")
-	handle := os.Getenv("HANDLE")
-	password := os.Getenv("PASSWORD")
-
-	// Create the client
-	client := &xrpc.Client{
-		Host: host,
-	}
-
-	// Authenticate
-	auth, err := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
-		Identifier: handle,
-		Password:   password,
-	})
-	if err != nil {
-		fmt.Println("An error occurred logging into Bluesky:", err)
-		return
-	}
-
-	// Set authentication tokens for XPRC from auth response
-	client.Auth = &xrpc.AuthInfo{
-		AccessJwt:  auth.AccessJwt,
-		RefreshJwt: auth.RefreshJwt,
-		Handle:     auth.Handle,
-		Did:        auth.Did,
-	}
 	// Remove URL from text
 	cleanedText := removeURLs(text)
 	fmt.Println("Incoming post content via Twitter:", cleanedText)
