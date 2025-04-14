@@ -1,9 +1,9 @@
-package bluesky
+package tests
 
 import (
 	"context"
 	"fmt"
-	"os"
+	"go-x-feeder-bot/bluesky"
 	"testing"
 
 	comatproto "github.com/bluesky-social/indigo/api/atproto"
@@ -13,29 +13,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var client *xrpc.Client
+var testingClient *xrpc.Client
 
 func init() {
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("An error occured loading environment variables, skipping:", err)
 	}
-	handle := os.Getenv("HANDLE")
-	if handle == "" {
-		fmt.Println("Error: HANDLE environment variable is required")
-		return
-	}
 
-	password := os.Getenv("PASSWORD")
-	if password == "" {
-		fmt.Println("Error: PASSWORD environment variable is required")
-		return
-	}
 	ctx := context.Background()
+
+	// Create the xrpc client
+	client := &xrpc.Client{
+		Host: "https://bsky.social",
+	}
 	// Authenticate
 	auth, err := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
-		Identifier: handle,
-		Password:   password,
+		Identifier: "hellopeter.dev",
+		Password:   "pdxNL2020!@#",
 	})
 	if err != nil {
 		fmt.Println("An error occurred logging into Bluesky:", err)
@@ -49,48 +44,57 @@ func init() {
 		Handle:     auth.Handle,
 		Did:        auth.Did,
 	}
+
+	testingClient = client
 }
 
 func TestPostTextToBluesky(t *testing.T) {
-	// Skip test in CI environment or when running automated tests
-	t.Skip("Skipping test that requires authentication")
-
 	//Text
-	text := "This is a test"
+	text := "This is a test again"
 
 	// Test posting to Bluesky with text
-	if err := PostToBluesky(text, nil, twitterscraper.Video{}, client); err != nil {
+	if err := bluesky.PostToBluesky(text, nil, twitterscraper.Video{}, testingClient); err != nil {
 		assert.Error(t, err)
+		t.Fatal(err)
 	}
 	fmt.Println("Text posted successfully")
 }
 
-func TestPostTextToBlueskyWithMedia(t *testing.T) {
-	// Skip test in CI environment or when running automated tests
-	t.Skip("Skipping test that requires authentication")
-
+func TestPostTextToBlueskyWithImage(t *testing.T) {
 	// Text
-	text := "This is a test"
+	text := "This is a test of a meme"
 
 	// Make images
 	var images []twitterscraper.Photo
 	newImage := &twitterscraper.Photo{
-		URL: "http://example.com/image.jpg",
+		URL: "https://i.pinimg.com/originals/79/c1/bd/79c1bd0ea830bce7fe9f4c9e91ffa982.jpg",
 		ID:  "2",
 	}
 	images = append(images, *newImage)
+	// Test posting to Bluesky with text and images
+	if err := bluesky.PostToBluesky(text, images, twitterscraper.Video{}, testingClient); err != nil {
+		assert.Error(t, err)
+		t.Fatal(err)
+	}
 
+	fmt.Println("Text and media posted successfully")
+}
+
+func TestPostTextToBlueskyWithVideo(t *testing.T) {
+	// Text
+	text := "This is a test of a video"
 	// Make a video
 	video := &twitterscraper.Video{
-		URL:     "http://example.com/video.mp4",
+		URL:     "https://video.twimg.com/amplify_video/1909279126479118337/vid/avc1/1080x1350/A18cAZZ3KqzM_O_M.mp4?tag=16",
 		ID:      "1",
-		Preview: "http://example.com/image.jpg",
-		HLSURL:  "http://example.com/video.mp4",
+		Preview: "https://i.pinimg.com/originals/79/c1/bd/79c1bd0ea830bce7fe9f4c9e91ffa982.jpg",
+		HLSURL:  "https://video.twimg.com/amplify_video/1909279126479118337/vid/avc1/1080x1350/A18cAZZ3KqzM_O_M.mp4?tag=16",
 	}
 
 	// Test posting to Bluesky with text and images
-	if err := PostToBluesky(text, images, *video, client); err != nil {
+	if err := bluesky.PostToBluesky(text, nil, *video, testingClient); err != nil {
 		assert.Error(t, err)
+		t.Fatal(err)
 	}
 
 	fmt.Println("Text and media posted successfully")
