@@ -25,6 +25,7 @@ var (
 func refreshToken(ctx context.Context, client *xrpc.Client) error {
 	refresh, err := comatproto.ServerRefreshSession(ctx, client)
 	if err != nil {
+		// Create a new session if refresh fails
 		auth, err := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
 			Identifier: handle,
 			Password:   password,
@@ -41,6 +42,7 @@ func refreshToken(ctx context.Context, client *xrpc.Client) error {
 		return nil
 	}
 
+	// Update the client's authentication information with the refreshed tokens
 	client.Auth = &xrpc.AuthInfo{
 		AccessJwt:  refresh.AccessJwt,
 		RefreshJwt: refresh.RefreshJwt,
@@ -90,7 +92,7 @@ func init() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Authenticate
+	// Create an authenticated user session
 	auth, err := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
 		Identifier: handle,
 		Password:   password,
@@ -108,7 +110,7 @@ func init() {
 		Did:        auth.Did,
 	}
 
-	// set client var
+	// set global client var
 	Client = client
 }
 
@@ -150,7 +152,7 @@ func main() {
 	})
 
 	c.Start()
-	fmt.Println("Cron scheduler started. Press Ctrl+C to exit...")
+	fmt.Println("--- X Feeder bot has started ---")
 	fmt.Println("XRPC Tokens will be refreshed every 110 minutes")
 	select {} // This will block forever
 }
