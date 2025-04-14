@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/bluesky-social/indigo/xrpc"
@@ -75,10 +76,44 @@ func Job(client *xrpc.Client) (func(), error) {
 				photos = tweet.Photos
 			}
 
+			// Try to post to Bluesky with error handling for auth errors
 			err := PostToBluesky(tweet.Text, photos, video, client)
 			if err != nil {
 				fmt.Println("Error posting to Bluesky:", err)
+				
+				// Check if the error might be an authentication error
+				// This is a simplified check - you might want to make this more specific 
+				// based on the actual error format returned by the API
+				if isAuthError(err) {
+					fmt.Println("Authentication error detected, token may have expired")
+				}
 			}
 		}
 	}, nil
+}
+
+// isAuthError checks if an error is likely related to authentication
+func isAuthError(err error) bool {
+	errStr := err.Error()
+	// Check for common auth-related error strings
+	authErrorIndicators := []string{
+		"unauthorized", 
+		"Unauthorized",
+		"401",
+		"auth",
+		"token",
+		"expired",
+		"authentication",
+		"login",
+		"credentials",
+		"jwt",
+	}
+	
+	for _, indicator := range authErrorIndicators {
+		if strings.Contains(errStr, indicator) {
+			return true
+		}
+	}
+	
+	return false
 }
