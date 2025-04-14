@@ -117,7 +117,7 @@ func init() {
 func main() {
 	jobSpec := os.Getenv("JOB_SPEC")
 	if jobSpec == "" {
-		jobSpec = "0 */10 * * * *" // Default value of 10 minutes
+		jobSpec = "*/1 * * * * *" // Default value of 10 minutes
 	}
 
 	// Create a token refresh job that runs every 110 minutes (just under 2 hours)

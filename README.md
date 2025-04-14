@@ -1,6 +1,6 @@
 # X Feeder Bot for Bluesky
 
-This open-source Go application automatically forwards posts from a Twitter/X account to Bluesky. It periodically checks for new tweets and posts them to your Bluesky account, including images and videos.
+This open-source Go application automatically forwards posts from a Twitter/X account to Bluesky. It periodically checks for new tweets and posts them to your Bluesky account, including images and videos. This uses the twitter scraper from [Imperatrona https://github.com/imperatrona/twitter-scraper](https://github.com/imperatrona/twitter-scraper) to find tweets for a given account in the environment variables.
 
 ## Features
 
@@ -9,7 +9,8 @@ This open-source Go application automatically forwards posts from a Twitter/X ac
 - Uploads and embeds images and videos
 - Configurable posting schedule via cron
 - Duplicate post detection to avoid reposting
-- Docker support for easy deployment
+- Docker support for easy deployment to Dokploy, Coolify, and more.
+- Testing
 
 ## Prerequisites
 
@@ -107,6 +108,10 @@ To get the required Twitter/X tokens:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Testing
+
+Testing is currently a work in progress. Right now, you can test a post creation but it will actually send a post to Bluesky as there's no way to mock the Bluesky API in a test environment.
 
 ## License
 
