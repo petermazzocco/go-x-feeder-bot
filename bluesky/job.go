@@ -41,7 +41,6 @@ func Job(client *xrpc.Client) (func(), error) {
 		scraper.SetAuthToken(twitterscraper.AuthToken{Token: authToken, CSRFToken: csrfToken})
 
 		// After setting Cookies or AuthToken you have to execute IsLoggedIn method.
-		// Add debug logging
 		fmt.Printf("Auth token length: %d, starts with: %s...\n", len(authToken), authToken[:5])
 		fmt.Printf("CSRF token length: %d, starts with: %s...\n", len(csrfToken), csrfToken[:5])
 
@@ -80,10 +79,8 @@ func Job(client *xrpc.Client) (func(), error) {
 			err := PostToBluesky(tweet.Text, photos, video, client)
 			if err != nil {
 				fmt.Println("Error posting to Bluesky:", err)
-				
+
 				// Check if the error might be an authentication error
-				// This is a simplified check - you might want to make this more specific 
-				// based on the actual error format returned by the API
 				if isAuthError(err) {
 					fmt.Println("Authentication error detected, token may have expired")
 				}
@@ -97,7 +94,7 @@ func isAuthError(err error) bool {
 	errStr := err.Error()
 	// Check for common auth-related error strings
 	authErrorIndicators := []string{
-		"unauthorized", 
+		"unauthorized",
 		"Unauthorized",
 		"401",
 		"auth",
@@ -108,12 +105,12 @@ func isAuthError(err error) bool {
 		"credentials",
 		"jwt",
 	}
-	
+
 	for _, indicator := range authErrorIndicators {
 		if strings.Contains(errStr, indicator) {
 			return true
 		}
 	}
-	
+
 	return false
 }

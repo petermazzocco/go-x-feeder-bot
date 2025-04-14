@@ -25,7 +25,6 @@ var (
 func refreshToken(ctx context.Context, client *xrpc.Client) error {
 	refresh, err := comatproto.ServerRefreshSession(ctx, client)
 	if err != nil {
-		// If refresh fails, try to create a new session
 		auth, err := comatproto.ServerCreateSession(ctx, client, &comatproto.ServerCreateSession_Input{
 			Identifier: handle,
 			Password:   password,
@@ -143,7 +142,6 @@ func main() {
 	// Add the main job wrapped with a token refresh check
 	c.AddFunc(jobSpec, func() {
 		// Check if we need to refresh token before running the job
-		// This handles cases where the token might expire between refresh cycles
 		_, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
@@ -153,6 +151,6 @@ func main() {
 
 	c.Start()
 	fmt.Println("Cron scheduler started. Press Ctrl+C to exit...")
-	fmt.Println("Token will be refreshed every 110 minutes")
+	fmt.Println("XRPC Tokens will be refreshed every 110 minutes")
 	select {} // This will block forever
 }
