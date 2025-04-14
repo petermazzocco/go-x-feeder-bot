@@ -40,7 +40,6 @@ func Job(client *xrpc.Client) (func(), error) {
 		scraper.SetAuthToken(twitterscraper.AuthToken{Token: authToken, CSRFToken: csrfToken})
 
 		// After setting Cookies or AuthToken you have to execute IsLoggedIn method.
-		// Add debug logging
 		fmt.Printf("Auth token length: %d, starts with: %s...\n", len(authToken), authToken[:5])
 		fmt.Printf("CSRF token length: %d, starts with: %s...\n", len(csrfToken), csrfToken[:5])
 
@@ -74,6 +73,7 @@ func Job(client *xrpc.Client) (func(), error) {
 				photos = tweet.Photos
 			}
 
+			// Try to post to Bluesky with error handling for auth errors
 			err := PostToBluesky(tweet.Text, photos, video, client)
 			if err != nil {
 				fmt.Println("Error posting to Bluesky:", err)
