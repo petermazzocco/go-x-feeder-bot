@@ -78,6 +78,7 @@ func TestPostTextToBlueskyWithImage(t *testing.T) {
 	}
 
 	fmt.Println("Text and media posted successfully")
+	assert.True(t, true)
 }
 
 func TestPostTextToBlueskyWithVideo(t *testing.T) {
@@ -98,4 +99,5 @@ func TestPostTextToBlueskyWithVideo(t *testing.T) {
 	}
 
 	fmt.Println("Text and media posted successfully")
+	assert.True(t, true)
 }

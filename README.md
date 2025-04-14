@@ -109,6 +109,10 @@ To get the required Twitter/X tokens:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Testing
+
+Testing is currently a work in progress. Right now, you can test a post creation but it will actually send a post to Bluesky as there's no way to mock the Bluesky API in a test environment.
+
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
