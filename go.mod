@@ -12,6 +12,7 @@ require (
 require (
 	github.com/AlexEidt/Vidio v1.5.1 // indirect
 	github.com/carlmjohnson/versioninfo v0.22.5 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -43,8 +44,10 @@ require (
 	github.com/multiformats/go-multihash v0.2.3 // indirect
 	github.com/multiformats/go-varint v0.0.7 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polydawn/refmt v0.89.1-0.20221221234430-40501e09de1f // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/whyrusleeping/cbor-gen v0.2.1-0.20241030202151-b7a6831be65e // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.46.1 // indirect
 	go.opentelemetry.io/otel v1.21.0 // indirect
@@ -57,5 +60,6 @@ require (
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect
 )

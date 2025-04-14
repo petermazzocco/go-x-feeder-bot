@@ -34,7 +34,7 @@ func Job(client *xrpc.Client) (func(), error) {
 		return nil, fmt.Errorf("TWITTER ACCOUNT environment variable is required")
 	}
 
-	// Return a function, not nil
+	// Return the function to run
 	return func() {
 		scraper := twitterscraper.New()
 		scraper.SetAuthToken(twitterscraper.AuthToken{Token: authToken, CSRFToken: csrfToken})
@@ -46,12 +46,11 @@ func Job(client *xrpc.Client) (func(), error) {
 
 		if !scraper.IsLoggedIn() {
 			fmt.Println("Invalid auth tokens - cannot authenticate with Twitter")
-			// Additional debugging info
 			resp, err := scraper.GetProfile("beaverfootball")
 			if err != nil {
 				fmt.Printf("Error info: %v\n", err)
 			} else {
-				fmt.Printf("Got response but still not logged in, status: %v\n", resp)
+				fmt.Printf("Got response, but another error occured, status: %v\n", resp)
 			}
 			return
 		}
