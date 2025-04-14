@@ -81,6 +81,9 @@ func init() {
 
 func main() {
 	jobSpec := os.Getenv("JOB_SPEC")
+	if jobSpec == "" {
+		jobSpec = "0 */10 * * * *" // Default value of 10 minutes
+	}
 
 	job, err := bluesky.Job(Client)
 	if err != nil {
