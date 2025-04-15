@@ -7,6 +7,7 @@ require (
 	github.com/imperatrona/twitter-scraper v0.0.17
 	github.com/joho/godotenv v1.5.1
 	github.com/robfig/cron v1.2.0
+	github.com/sashabaranov/go-openai v1.38.1
 	github.com/stretchr/testify v1.10.0
 )
 

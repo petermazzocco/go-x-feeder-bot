@@ -3,6 +3,7 @@ package bluesky
 import (
 	"context"
 	"fmt"
+	"os"
 	"regexp"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	lexutil "github.com/bluesky-social/indigo/lex/util"
 	"github.com/bluesky-social/indigo/xrpc"
 	twitterscraper "github.com/imperatrona/twitter-scraper"
+	"github.com/sashabaranov/go-openai"
 )
 
 func removeURLs(text string) string {
@@ -66,8 +68,56 @@ func PostToBluesky(text string, images []twitterscraper.Photo, video twitterscra
 				continue
 			}
 
+			// Use OpenAI API to describe image for alt text
+			fmt.Println("Describing image for alt text...")
+			openAiKey := os.Getenv("OPENAI_API_KEY")
+			client := openai.NewClient(openAiKey)
+			resp, err := client.CreateChatCompletion(
+				context.Background(),
+				openai.ChatCompletionRequest{
+					Model: openai.GPT4o,
+					Messages: []openai.ChatCompletionMessage{
+						{
+							Role: openai.ChatMessageRoleUser,
+							MultiContent: []openai.ChatMessagePart{
+								{
+									Type: openai.ChatMessagePartTypeText,
+									Text: "Create alt text by describing what it going on in this image. ",
+								},
+								{
+									Type: openai.ChatMessagePartTypeImageURL,
+									ImageURL: &openai.ChatMessageImageURL{
+										URL:    image.URL,
+										Detail: "high",
+									},
+								},
+							},
+						},
+					},
+					MaxTokens: 1000,
+				},
+			)
+
+			if err != nil {
+				fmt.Printf("ChatCompletion error: %v\n", err)
+				// Provide fallback alt text instead of returning an error
+				embeddedImage := &bsky.EmbedImages_Image{
+					Alt:   "Image from Twitter", // Fallback alt text
+					Image: imageBlob,
+				}
+				imageBlobs = append(imageBlobs, embeddedImage)
+				continue // Skip to next image
+			}
+
+			// Check if there are any choices in the response
+			altText := "Image from Twitter" // Default fallback
+			if len(resp.Choices) > 0 {
+				altText = resp.Choices[0].Message.Content
+				fmt.Println("ChatGPT response", altText)
+			}
+
 			embeddedImage := &bsky.EmbedImages_Image{
-				Alt:   "This X feeder account posted an image",
+				Alt:   altText,
 				Image: imageBlob,
 			}
 			imageBlobs = append(imageBlobs, embeddedImage)
